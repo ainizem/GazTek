@@ -1,0 +1,145 @@
+package juego;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+
+public class Main extends JFrame {
+    private final ArrayList<Point> startPoints = new ArrayList<>();
+    private final ArrayList<Point> endPoints = new ArrayList<>();
+    private final ArrayList<Color> cableColors = new ArrayList<>();
+    private Point selectedPoint = null;
+    private Color selectedColor = null;
+    private final ArrayList<Line> connectedLines = new ArrayList<>();
+    private JPanel panel;
+    private final int CABLE_WIDTH = 10; // Grosor del cable aumentado
+
+    public Main() {
+        setTitle("Unir cables");
+        setSize(800, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        generateCables();
+        initializePanel();
+
+        getContentPane().add(panel);
+    }
+
+    private void initializePanel() {
+        panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                drawConnectors(g);
+                drawLines(g);
+            }
+        };
+        panel.setBackground(Color.DARK_GRAY);
+
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                selectConnector(e.getPoint());
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                connectCable(e.getPoint());
+                repaint();
+            }
+        });
+
+        panel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (selectedPoint != null) {
+                    panel.repaint();
+                    Graphics2D g2 = (Graphics2D) panel.getGraphics();
+                    g2.setColor(selectedColor);
+                    g2.setStroke(new BasicStroke(CABLE_WIDTH));
+                    g2.drawLine(selectedPoint.x, selectedPoint.y, e.getX(), e.getY());
+                }
+            }
+        });
+    }
+
+    private void generateCables() {
+        int yOffset = 150;
+        int gap = 80;
+        
+        for (int i = 0; i < 4; i++) {
+            startPoints.add(new Point(100, yOffset + i * gap));
+            endPoints.add(new Point(700, yOffset + i * gap));
+        }
+        
+        ArrayList<Color> colors = new ArrayList<>(Arrays.asList(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
+        Collections.shuffle(colors);
+        cableColors.addAll(colors);
+        
+        Collections.shuffle(endPoints); // Desordenar las posiciones finales para mayor dificultad
+    }
+
+    private void drawConnectors(Graphics g) {
+        for (int i = 0; i < startPoints.size(); i++) {
+            g.setColor(cableColors.get(i));
+            g.fillOval(startPoints.get(i).x - 15, startPoints.get(i).y - 15, 30, 30);
+        }
+        for (int i = 0; i < endPoints.size(); i++) {
+            g.setColor(cableColors.get(i));
+            g.fillOval(endPoints.get(i).x - 15, endPoints.get(i).y - 15, 30, 30);
+        }
+    }
+
+    private void drawLines(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        for (Line line : connectedLines) {
+            g2.setColor(line.color);
+            g2.setStroke(new BasicStroke(CABLE_WIDTH));
+            g2.drawLine(line.start.x, line.start.y, line.end.x, line.end.y);
+        }
+    }
+
+    private void selectConnector(Point point) {
+        for (int i = 0; i < startPoints.size(); i++) {
+            if (point.distance(startPoints.get(i)) <= 15) {
+                selectedPoint = startPoints.get(i);
+                selectedColor = cableColors.get(i);
+                return;
+            }
+        }
+    }
+
+    private void connectCable(Point point) {
+        for (int i = 0; i < endPoints.size(); i++) {
+            if (point.distance(endPoints.get(i)) <= 15 && selectedColor == cableColors.get(i)) {
+                connectedLines.add(new Line(selectedPoint, endPoints.get(i), selectedColor));
+                startPoints.remove(selectedPoint);
+                endPoints.remove(i);
+                cableColors.remove(i);
+                break;
+            }
+        }
+        selectedPoint = null;
+        selectedColor = null;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Main game = new Main();
+            game.setVisible(true);
+        });
+    }
+
+    static class Line {
+        Point start, end;
+        Color color;
+
+        Line(Point start, Point end, Color color) {
+            this.start = start;
+            this.end = end;
+            this.color = color;
+        }
+    }
+}
