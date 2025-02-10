@@ -36,7 +36,7 @@ public class Main extends JFrame {
                 drawLines(g);
             }
         };
-        panel.setBackground(Color.DARK_GRAY);
+        panel.setBackground(new Color(139, 0, 0));
 
         panel.addMouseListener(new MouseAdapter() {
             @Override
