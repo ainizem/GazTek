@@ -3,7 +3,7 @@ package juego;
 
 import java.awt.EventQueue;
 
-import jugarPartida.LabView;
+import map.LabView;
 
 public class Main {
 
