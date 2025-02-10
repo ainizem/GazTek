@@ -1,0 +1,62 @@
+package jugarPartida;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class GymView extends JFrame {
+    private JLabel lblFondoGym;
+    private JButton btnPasillo2;
+    private JLabel lblPasillo2;
+    private ImageIcon imageIcon;
+
+    public GymView() {
+        setTitle("Gym View");
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+
+        btnPasillo2 = new JButton("");
+        btnPasillo2.setContentAreaFilled(false);
+        btnPasillo2.setBorderPainted(false);
+        btnPasillo2.setFocusPainted(false);
+        btnPasillo2.setOpaque(false);
+        add(btnPasillo2);
+
+        lblPasillo2 = new JLabel(new ImageIcon("img\\flecha-abajo.png"));
+        add(lblPasillo2);
+
+        imageIcon = new ImageIcon("img\\gimnasioR.jpg");
+        lblFondoGym = new JLabel("");
+        lblFondoGym.setIcon(imageIcon);
+        add(lblFondoGym);
+
+        btnPasillo2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				new Pasillo2View().setVisible(true);
+				dispose();
+
+			}
+		});
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int width = getWidth();
+                int height = getHeight();
+
+                Image scaledImage = imageIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                lblFondoGym.setIcon(new ImageIcon(scaledImage));
+                lblFondoGym.setBounds(0, 0, width, height);
+
+                btnPasillo2.setBounds((int) (width * 0.42), (int) (height * 0.85), 74, 46);
+                lblPasillo2.setBounds((int) (width * 0.42), (int) (height * 0.85), 74, 46);
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new GymView().setVisible(true));
+    }
+}
