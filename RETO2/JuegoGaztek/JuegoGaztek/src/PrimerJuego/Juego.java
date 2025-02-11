@@ -105,7 +105,7 @@ public class Juego {
 		layeredPane.setLayout(null);
 
 		// Imagen de fondo
-		ImageIcon imageIcon = new ImageIcon("E:\\Clase\\RETO2\\clase jueguillo.png");
+		ImageIcon imageIcon = new ImageIcon("img\\clase jueguillo.png");
 
 		Image imagenEscalada = imageIcon.getImage().getScaledInstance(1200, 748, Image.SCALE_SMOOTH);
 		JLabel backgroundLabel = new JLabel(new ImageIcon(imagenEscalada));
@@ -116,7 +116,7 @@ public class Juego {
 		panelSuperior.setBounds(0, 0, 1200, 34);
 		panelSuperior.setBackground(Color.DARK_GRAY);
 
-		ImageIcon originalIcon = new ImageIcon("E:\\Clase\\RETO2\\bombilla.png");
+		ImageIcon originalIcon = new ImageIcon("img\\bombilla.png");
 
 		Image imagenEscalada1 = originalIcon.getImage().getScaledInstance(60, 50, Image.SCALE_SMOOTH);
 
@@ -124,7 +124,7 @@ public class Juego {
 
 		btnAyuda = new JButton();
 		btnAyuda.setBounds(1444, 110, 50, 50);
-		btnAyuda.setIcon(new ImageIcon("E:\\Clase\\RETO2\\bombilla.png")); // Asegúrate de usar una imagen en tu carpeta
+		btnAyuda.setIcon(new ImageIcon("img\\bombilla.png")); // Asegúrate de usar una imagen en tu carpeta
 		btnAyuda.setIcon(iconoEscalado);
 		btnAyuda.setContentAreaFilled(false); // Hace que el botón sea más limpio
 		btnAyuda.setBorderPainted(false); // Quita el borde
