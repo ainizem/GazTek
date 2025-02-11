@@ -27,6 +27,8 @@ public class Juego {
     private JButton btnAyuda;
     private JLabel lblSalir;
     private JLabel lblObjetosRestantes;
+    private JPanel panelObjetosRestantes;
+    private List<JLabel> listaObjetos;
 
     /**
      * @wbp.parser.entryPoint
@@ -120,12 +122,51 @@ public class Juego {
         panelSuperior.setBackground(Color.DARK_GRAY);
         
         btnAyuda = new JButton();
-        btnAyuda.setBounds(544, 510, 500, 500);
+        btnAyuda.setBounds(244, 210, 50, 50);
         btnAyuda.setIcon(new ImageIcon("img\\bombilla.png")); // Asegúrate de usar una imagen en tu carpeta
         btnAyuda.setContentAreaFilled(false); // Hace que el botón sea más limpio
         btnAyuda.setBorderPainted(false); // Quita el borde
         btnAyuda.setVisible(true);
         layeredPane.add(btnAyuda, Integer.valueOf(2)); 
+        
+        ImageIcon icon = new ImageIcon("img\\bombilla.png");
+        if (icon.getImageLoadStatus() != MediaTracker.COMPLETE) {
+            System.out.println("Error al cargar la imagen");
+        }
+        
+        panelObjetosRestantes = new JPanel();
+        panelObjetosRestantes.setLayout(new BoxLayout(panelObjetosRestantes, BoxLayout.Y_AXIS));
+        panelObjetosRestantes.setBounds(20, 40, 200, 300);  // Ajusta la posición y el tamaño
+        panelObjetosRestantes.setOpaque(false);  // Para que el fondo no cubra los elementos
+        layeredPane.add(panelObjetosRestantes, Integer.valueOf(2));  // Añadir al layeredPane
+        
+        // Lista de objetos a encontrar
+        listaObjetos = new ArrayList<>();
+        String[] nombresObjetos = {"Libro Rojo", "Agenda Azul", "Estuche", "Gafas"};
+        
+        panelObjetosRestantes.setLayout(null); // Desactivar el layout automático
+
+        int x = 100; // Posición inicial en X
+        int y = 100; // Posición inicial en Y
+        int width = 200; // Ancho del JLabel
+        int height = 35; // Alto del JLabel
+        int spacing = 45;
+        
+        for (String nombre : nombresObjetos) {
+            JLabel objetoLabel = new JLabel(nombre);
+            objetoLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            objetoLabel.setForeground(Color.WHITE);  // Puedes cambiar el color para hacerlo visible
+            
+            objetoLabel.setBounds(x, y, width, height); // Posición y tamaño
+            y += spacing;
+            
+            listaObjetos.add(objetoLabel);
+            panelObjetosRestantes.add(objetoLabel);
+        }
+
+        // Revalidar para actualizar la interfaz
+        panelObjetosRestantes.revalidate();
+        panelObjetosRestantes.repaint();
        
         
 
@@ -141,7 +182,7 @@ public class Juego {
         for (int i = 0; i < botones.length; i++) {
             botones[i] = new JButton("Botón " + (i + 1));
             botones[i].setBounds(posiciones[i][0], posiciones[i][1], posiciones[i][2], posiciones[i][3]);
-            botones[i].addActionListener(new BotonListener(botones[i])); // Agregar acción
+            botones[i].addActionListener(new BotonListener(botones[i], nombresObjetos[i])); // Agregar acción
             botones[i].setVisible(true);
             layeredPane.add(botones[i]);
         }
@@ -222,6 +263,7 @@ public class Juego {
         lblObjetosRestantes = new JLabel("Objetos restantes: Cargando...");
         lblObjetosRestantes.setForeground(Color.WHITE);
         lblObjetosRestantes.setFont(new Font("Arial", Font.BOLD, 20));
+        lblObjetosRestantes.setVisible(false);
         
 
      // Añadir lblPuntos a la izquierda
@@ -298,9 +340,11 @@ public class Juego {
 
     private class BotonListener implements ActionListener {
         private JButton boton;
+        private String nombreObjeto;
 
-        public BotonListener(JButton boton) {
+        public BotonListener(JButton boton, String nombreObjeto) {
             this.boton = boton;
+            this.nombreObjeto = nombreObjeto;
         }
 
         @Override
@@ -310,10 +354,27 @@ public class Juego {
                 estadoJuego.agregarPuntos(100);
                 actualizarPuntos();
                 boton.setEnabled(false); // Desactivar el botón
+
+                // Encontramos el objeto, así que lo tachamos
+                tacharObjeto(nombreObjeto);
+
                 verificarJuegoFinalizado();
             }
         }
     }
+
+    private void tacharObjeto(String nombreObjeto) {
+        for (JLabel label : listaObjetos) {
+            if (label.getText().equals(nombreObjeto)) {
+                // Tachamos el objeto
+                label.setText("<html><s>" + label.getText() + "</s></html>");  // HTML para tachar el texto
+                label.setForeground(Color.GRAY);  // Opcional: Cambiar el color para dar la sensación de que ya fue encontrado
+                break;
+            }
+        }
+    }
+
+   
 
     public static void main(String[] args) {
         EstadoJuego estadoJuego = new EstadoJuego(3600); // 1 hora en segundos
